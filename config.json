@@ -6,6 +6,7 @@
   "allowCustomHomeservers": false,
 
   "hideUsernamePasswordFields": true,
+  "allowRegistration": false,
   "disableAccountSwitcher": false,
 
   "elementCallUrl": null,

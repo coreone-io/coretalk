@@ -27,7 +27,7 @@ export function TelemetryConsentBanner() {
       id: 'telemetry-consent',
       priority: 100, // Higher priority than device verification
       icon: Shield,
-      title: 'Help improve Sable',
+      title: `Help improve ${SABLE_PRODUCT_NAME}`,
       description: (
         <Text size="T300" priority="300">
           Optionally send anonymous crash reports to help us fix bugs faster. No messages, room

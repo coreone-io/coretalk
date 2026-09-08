@@ -86,7 +86,7 @@ function SlidingSyncLoginOption({ value, onChange }: SlidingSyncLoginOptionProps
 export function Login() {
   const server = useAuthServer();
   const { hashRouter } = useClientConfig();
-  const { hideUsernamePasswordFields } = useClientConfig();
+  const { hideUsernamePasswordFields, allowRegistration } = useClientConfig();
   const { loginFlows, registerFlows, authMetadata } = useAuthFlows();
   const discovery = useAutoDiscoveryInfo();
   const baseUrl = discovery['m.homeserver'].base_url;
@@ -121,8 +121,12 @@ export function Login() {
     ? withSearchParam(getRegisterPath(server), { addAccount: '1' })
     : getRegisterPath(server);
 
+  // A homeserver that offers SSO can still create accounts on first sign-in,
+  // which is why upstream keeps the register link visible in that case. Where
+  // the deployment says accounts are made elsewhere, the link leads nowhere.
   const registrationUnavailable =
-    registerFlows.status === RegisterFlowStatus.RegistrationDisabled && !parsedFlows.sso;
+    allowRegistration === false ||
+    (registerFlows.status === RegisterFlowStatus.RegistrationDisabled && !parsedFlows.sso);
 
   const oidcCode = searchParams.get('code') ?? undefined;
   const oidcState = searchParams.get('state') ?? undefined;

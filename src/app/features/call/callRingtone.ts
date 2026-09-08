@@ -14,7 +14,7 @@ export const CUSTOM_CALL_RINGTONE_MAX_BYTES = 3_000_000;
 export const CUSTOM_CALL_RINGTONE_MAX_DURATION_MS = 45_000;
 
 const CALL_TONE_LABELS: Record<CallRingtoneId, string> = {
-  'sable-default': 'Sable Default',
+  'sable-default': `${SABLE_PRODUCT_NAME} Default`,
   'classic-soft': 'Classic Soft Ring',
   'minimal-ping': 'Minimal Ping Loop',
   silent: 'Silent (Visual Only)',

@@ -127,7 +127,7 @@ function EmailNotification() {
             device_display_name: email,
             lang: 'en',
             data: {
-              brand: 'Sable',
+              brand: SABLE_PRODUCT_NAME,
             },
             append: true,
           });

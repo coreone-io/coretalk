@@ -1220,7 +1220,7 @@ function Sync() {
         <SettingTile
           title="Sync settings across devices"
           focusId="sync-across-devices"
-          description="Store your settings in your Matrix account so they follow you to any Sable instance. Locally imported tweak CSS is uploaded as unencrypted account data readable by your homeserver. Notification and zoom preferences are kept per-device."
+          description={`Store your settings in your Matrix account so they follow you to any ${SABLE_PRODUCT_NAME} instance. Locally imported tweak CSS is uploaded as unencrypted account data readable by your homeserver. Notification and zoom preferences are kept per-device.`}
           after={<Switch variant="Primary" value={syncEnabled} onChange={setSyncEnabled} />}
         />
         {syncEnabled && (
@@ -1406,7 +1406,7 @@ function DiagnosticsAndPrivacy() {
           focusId="error-reporting"
           description={
             isSentryConfigured
-              ? 'Send anonymous crash reports to help improve Sable. No messages, room names, or personal data are included.'
+              ? `Send anonymous crash reports to help improve ${SABLE_PRODUCT_NAME}. No messages, room names, or personal data are included.`
               : 'Error reporting is not configured for this build.'
           }
           after={

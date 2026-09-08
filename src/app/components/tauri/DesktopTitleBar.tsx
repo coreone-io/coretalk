@@ -94,7 +94,7 @@ function CloseIcon() {
 // disabled there). The Snap Layouts overlay is Windows-only.
 export function DesktopTitleBar() {
   const [maximized, setMaximized] = useState(false);
-  const [windowTitle, setWindowTitle] = useState('Sable');
+  const [windowTitle, setWindowTitle] = useState(SABLE_PRODUCT_NAME);
   const appWindowRef = useRef<Window | null>(null);
   const snapTimerRef = useRef<number | undefined>(undefined);
   const os = isTauri() ? osType() : undefined;

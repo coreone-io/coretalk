@@ -1,3 +1,17 @@
+# Настройка окружения для проверок и сборки.
+#
+# ⚠️ ОТЛИЧАЕТСЯ ОТ АПСТРИМА, и это вынужденно. Апстрим ставит инструменты
+# действием `jdx/mise-action`, а организация `coreone-io` разрешает в прогонах
+# только действия GitHub, свои и два названных исключения (`allowed_actions:
+# selected`). Стороннее действие GitHub отклоняет ДО запуска и независимо от
+# условий шага, поэтому здесь его нет вовсе: пока оно стояло, в форке падали
+# ВСЕ проверки любого PR за секунды — на шаге подготовки, ни разу не дойдя до
+# нашего кода.
+#
+# Node берётся той же версии, на которой собирается боевая страница
+# (`.github/workflows/web-release.yml`): проверка обязана идти в том окружении,
+# что и выпуск, иначе она доказывает не то. Менеджер пакетов — из поля
+# `packageManager` файла package.json, его подставляет corepack.
 name: Setup App
 description: Sets up Node.js, installs dependencies, and optionally builds the app.
 
@@ -7,7 +21,7 @@ inputs:
     required: false
     default: pnpm install --frozen-lockfile
   tauri:
-    description: Whether to install Tauri build dependencies via mise.
+    description: Whether to install Tauri build dependencies (unsupported in this fork).
     required: false
     default: 'false'
   build:
@@ -22,30 +36,42 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Setup tools (mise)
-      id: setup-mise
-      uses: jdx/mise-action@9e7f7633ff6f6d6048a9418a68d48f288f50eb14 # v4.2.3
-      with:
-        cache: true
-
-    - name: Cache Rust toolchain (workaround jdx/mise-action#215)
+    # Отказ громкий и по существу: молчаливый пропуск дал бы «зелёную» сборку
+    # приложения, которой не было.
+    - name: Сборка Tauri в этом форке не собирается
       if: ${{ inputs.tauri == 'true' }}
-      id: cache-rust
+      shell: bash
+      run: |
+        echo "::error::Сборка Tauri в прогонах форка не настроена: она держалась на mise, а стороннее действие запрещено политикой организации coreone-io. Настольные и мобильные сборки делаются локально." >&2
+        exit 1
+
+    - name: Node.js
+      uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+      with:
+        node-version: 24
+
+    - name: Менеджер пакетов из репозитория
+      shell: bash
+      run: corepack enable
+
+    # Путь склада спрашивается у самого pnpm: записанный по памяти, он
+    # промахнулся бы мимо каталога и кэшировал пустоту, ничего не сказав.
+    - name: Где склад пакетов
+      id: pnpm-store
+      shell: bash
+      run: echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+    - name: Кэш склада пакетов
       uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
       with:
-        path: ~/.rustup/toolchains/
-        key: rust-${{ runner.os }}-${{ hashFiles('rust-toolchain.toml') }}
-        restore-keys: rust-${{ runner.os }}-
+        path: ${{ steps.pnpm-store.outputs.path }}
+        key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+        restore-keys: pnpm-store-${{ runner.os }}-
 
     - name: Ensure task scripts are executable
       shell: bash
       working-directory: ${{ github.workspace }}
       run: chmod -R +x scripts/
-
-    - name: Trust project mise configuration
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: mise settings set trusted_config_paths "$GITHUB_WORKSPACE"
 
     - name: Install dependencies
       shell: bash
@@ -53,18 +79,6 @@ runs:
       run: ${INPUTS_INSTALL_COMMAND}
       env:
         INPUTS_INSTALL_COMMAND: ${{ inputs.install-command }}
-
-    - name: Install Tauri build dependencies
-      if: ${{ inputs.tauri == 'true' }}
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: mise run tauri:setup
-
-    - name: Force reinstall Rust on cache mismatch
-      if: ${{ inputs.tauri == 'true' && steps.setup-mise.outputs.cache-hit == 'true' && steps.cache-rust.outputs.cache-hit != 'true' }}
-      shell: bash
-      working-directory: ${{ github.workspace }}
-      run: mise install rust --force
 
     - name: Build app
       if: ${{ inputs.build == 'true' }}

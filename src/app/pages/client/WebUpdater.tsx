@@ -42,7 +42,7 @@ export function WebUpdater() {
       priority: 200, // Top priority for updates
       icon: ArrowUp,
       title: 'Update Available',
-      description: 'A new version of Sable is available. Refresh to apply updates.',
+      description: `A new version of ${SABLE_PRODUCT_NAME} is available. Refresh to apply updates.`,
       primaryAction: {
         label: 'Refresh',
         variant: 'Primary',
