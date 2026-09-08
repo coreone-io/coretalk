@@ -3,7 +3,11 @@
 # Почему не там: узел `srv-desk` делит восемь ядер и пятнадцать гигабайт с
 # задачником и службой поддержки BritiTrade. Сборка Vite на нём 08.09.2026
 # дважды забрала всю память — средняя загрузка дошла до 95, службы перестали
-# отвечать. Машина отдаёт страницу, а не строит её.
+# отвечать, машину пришлось перезагружать. Машина отдаёт страницу, а не строит её.
+#
+# ⚠️ Действия закреплены по SHA и взяты только из официальных: правило
+# организации coreone-io (`allowed_actions: selected`, `sha_pinning_required`).
+# Стороннее действие выпуска здесь не годится — выпуск делаем командой gh.
 name: Страница — сборка и выпуск
 
 on:
@@ -19,9 +23,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version: 24
 
@@ -34,7 +38,7 @@ jobs:
       - name: Сборка
         run: pnpm run build
 
-      # Архив несёт в себе отметку версии: по ней роль Ansible понимает, что
+      # Архив несёт отметку версии внутри: по ней роль Ansible понимает, что
       # уже выложено, и не качает то же самое второй раз.
       - name: Архив страницы
         run: |
@@ -42,10 +46,10 @@ jobs:
           tar -czf coretalk-web.tar.gz -C dist .
 
       - name: Выпуск с архивом
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: web-${{ github.sha }}
-          name: Страница CoreTalk ${{ github.sha }}
-          files: coretalk-web.tar.gz
-          prerelease: false
-          make_latest: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "web-${GITHUB_SHA}" coretalk-web.tar.gz \
+            --title "Страница CoreTalk ${GITHUB_SHA}" \
+            --notes "Собрана из ${GITHUB_SHA}. Архив раскладывает роль Ansible coretalk_web." \
+            --latest
