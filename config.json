@@ -14,7 +14,7 @@
   "hashRouter": { "enabled": false, "basename": "/" },
 
   "pushNotificationDetails": {
-    "pushNotifyUrl": "https://push.coreone.io/_matrix/push/v1/notify",
+    "pushNotifyUrl": "https://push-m.coreone.io/_matrix/push/v1/notify",
     "vapidPublicKey": "BDJFlrp4MvJj5-TZj-liwweR3b_RM0Y4i-FcYuici7ZwYS82UTugmUqGssYSD1JqiK4oyd2Qw9Skl6CZiQ4dWfQ",
     "webPushAppID": "io.coreone.talk.web",
     "nativePushAppID": "io.coreone.talk.ios",
