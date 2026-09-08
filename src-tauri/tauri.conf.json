@@ -1,8 +1,8 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "Sable",
+  "productName": "CoreTalk",
   "version": "1.21.0",
-  "identifier": "moe.sable.client",
+  "identifier": "io.coreone.talk",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:8080",

@@ -1,9 +1,9 @@
 {
-  "name": "Sable",
-  "short_name": "Sable",
-  "description": "An almost stable Matrix client",
+  "name": "CoreTalk",
+  "short_name": "CoreTalk",
+  "description": "Корпоративный мессенджер компании",
   "dir": "auto",
-  "lang": "en-US",
+  "lang": "ru",
   "display": "standalone",
   "orientation": "portrait",
   "start_url": "./",
