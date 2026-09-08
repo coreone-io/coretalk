@@ -233,7 +233,7 @@ export function DesktopUpdater() {
         priority: 200,
         icon: ArrowUp,
         title: 'Update Installed',
-        description: `Sable ${updateInfo.version} has been installed. Restart the app to finish updating.`,
+        description: `${SABLE_PRODUCT_NAME} ${updateInfo.version} has been installed. Restart the app to finish updating.`,
         primaryAction: {
           label: 'Restart Now',
           variant: 'Primary',
@@ -272,7 +272,7 @@ export function DesktopUpdater() {
       priority: 200,
       icon: ArrowUp,
       title: 'Update Available',
-      description: `Sable ${updateInfo.version} is available.${updateInfo.body ? `\n${updateInfo.body}` : ''}`,
+      description: `${SABLE_PRODUCT_NAME} ${updateInfo.version} is available.${updateInfo.body ? `\n${updateInfo.body}` : ''}`,
       primaryAction: {
         label: isDownloading
           ? 'Downloading...'

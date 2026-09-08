@@ -255,22 +255,22 @@ export function About({ requestBack, requestClose }: Readonly<AboutProps>) {
                   <img
                     style={{ width: toRem(60), height: toRem(60) }}
                     src={LogoSVG}
-                    alt="Sable logo"
+                    alt={`${SABLE_PRODUCT_NAME} logo`}
                   />
                 </Box>
                 <Box direction="Column" gap="300">
                   <Box direction="Column" gap="100">
                     <Box gap="100" alignItems="End">
-                      <Text size="H3">Sable</Text>
+                      <Text size="H3">{SABLE_PRODUCT_NAME}</Text>
                       <Text size="T200">{`v${APP_VERSION}${devLabel}${buildLabel}`}</Text>
                     </Box>
-                    <Text>An almost stable Matrix client.</Text>
+                    <Text>Corporate messenger.</Text>
                   </Box>
 
                   <Box gap="200" wrap="Wrap">
                     <Button
                       as="a"
-                      href="https://github.com/SableClient/Sable"
+                      href="https://github.com/coreone-io/coretalk"
                       rel="noreferrer noopener"
                       target="_blank"
                       variant="Secondary"
@@ -292,7 +292,7 @@ export function About({ requestBack, requestClose }: Readonly<AboutProps>) {
                       radii="300"
                       before={menuIcon(Heart, { weight: 'fill' })}
                     >
-                      <Text size="B300">Support</Text>
+                      <Text size="B300">Support Sable</Text>
                     </Button>
                   </Box>
                 </Box>

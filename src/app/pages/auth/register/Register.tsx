@@ -3,6 +3,7 @@ import { Box, Text, color } from 'folds';
 import { Link, useSearchParams } from 'react-router-dom';
 import { SSOAction } from '$types/matrix-sdk';
 import { useAuthServer } from '$hooks/useAuthServer';
+import { useClientConfig } from '$hooks/useClientConfig';
 import { RegisterFlowStatus, useAuthFlows } from '$hooks/useAuthFlows';
 import { useParsedLoginFlows } from '$hooks/useParsedLoginFlows';
 import { useAutoDiscoveryInfo } from '$hooks/useAutoDiscoveryInfo';
@@ -29,6 +30,7 @@ const useRegisterSearchParams = (searchParams: URLSearchParams): RegisterPathSea
 
 export function Register() {
   const server = useAuthServer();
+  const { allowRegistration } = useClientConfig();
   const { loginFlows, registerFlows, authMetadata } = useAuthFlows();
   const discovery = useAutoDiscoveryInfo();
   const baseUrl = discovery['m.homeserver'].base_url;
@@ -47,6 +49,26 @@ export function Register() {
     : getLoginPath(server);
 
   const showOidc = authMetadata?.prompt_values_supported?.includes('create') === true;
+
+  // Accounts are created outside this client, so the page states that instead
+  // of offering forms that the homeserver would refuse anyway.
+  if (allowRegistration === false) {
+    return (
+      <Box direction="Column" gap="500">
+        <Text size="H2" priority="400">
+          Register
+        </Text>
+        <Text style={{ color: color.Critical.Main }} size="T300">
+          Registration is closed on this server. Accounts are created by your organisation — sign in
+          with your work account instead.
+        </Text>
+        <span data-spacing-node />
+        <Text align="Center">
+          <Link to={loginUrl}>Back to sign in</Link>
+        </Text>
+      </Box>
+    );
+  }
 
   if (showOidc) {
     return (

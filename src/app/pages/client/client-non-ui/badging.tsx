@@ -43,7 +43,8 @@ export function PageTitleUpdater() {
 
   useEffect(() => {
     const { highlightTotal } = getUnreadTotals(roomToUnread);
-    document.title = highlightTotal > 0 ? `(${highlightTotal}) Sable Client` : 'Sable Client';
+    document.title =
+      highlightTotal > 0 ? `(${highlightTotal}) ${SABLE_PRODUCT_NAME}` : SABLE_PRODUCT_NAME;
   }, [roomToUnread]);
 
   return null;

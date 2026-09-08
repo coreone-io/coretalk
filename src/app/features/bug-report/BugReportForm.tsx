@@ -52,7 +52,7 @@ export function buildGitHubUrl(
     if (fields.reproduction) params.reproduction = fields.reproduction;
     if (fields['expected-behavior']) params['expected-behavior'] = fields['expected-behavior'];
     // Auto-populate the platform/versions field
-    params.info = `- OS: ${navigator.platform || 'unknown'}\n- Browser: ${navigator.userAgent}\n- Sable: ${version}`;
+    params.info = `- OS: ${navigator.platform || 'unknown'}\n- Browser: ${navigator.userAgent}\n- ${SABLE_PRODUCT_NAME}: ${version}`;
     if (fields.context) params.context = fields.context;
   } else {
     params.template = 'feature_request.yml';
@@ -350,7 +350,7 @@ export function BugReportForm({ onDone }: { onDone: () => void }) {
         <Box direction="Column" gap="100">
           <Text size="L400">Platform info (auto-included)</Text>
           <Text size="T200" style={{ opacity: 0.7, wordBreak: 'break-all' }}>
-            {`Sable v${APP_VERSION}${IS_RELEASE_TAG ? '' : '-dev'} • ${navigator.userAgent}`}
+            {`${SABLE_PRODUCT_NAME} v${APP_VERSION}${IS_RELEASE_TAG ? '' : '-dev'} • ${navigator.userAgent}`}
           </Text>
         </Box>
       )}

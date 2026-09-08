@@ -46,18 +46,18 @@ export function Desktop({ requestBack, requestClose }: DesktopProps) {
                 <SettingToggle
                   title="Use custom title bar"
                   focusId="use-custom-title-bar"
-                  description="Use Sable-drawn window controls and connection status instead of the native window chrome."
+                  description={`Use ${SABLE_PRODUCT_NAME}-drawn window controls and connection status instead of the native window chrome.`}
                   value={useCustomTitleBar}
                   onChange={setUseCustomTitleBar}
                   ariaLabel="use-custom-title-bar"
                 />
                 <SettingToggle
-                  title="Close button keeps Sable running"
+                  title={`Close button keeps ${SABLE_PRODUCT_NAME} running`}
                   focusId="close-to-background-on-close"
                   description={
                     type === 'macos'
-                      ? 'When enabled, closing the window keeps Sable running instead of exiting. Reopen it from the Dock.'
-                      : 'When enabled, closing the window keeps Sable running in the system tray instead of exiting. This needs the tray icon below: without a tray to restore from, closing exits Sable.'
+                      ? `When enabled, closing the window keeps ${SABLE_PRODUCT_NAME} running instead of exiting. Reopen it from the Dock.`
+                      : `When enabled, closing the window keeps ${SABLE_PRODUCT_NAME} running in the system tray instead of exiting. This needs the tray icon below: without a tray to restore from, closing exits ${SABLE_PRODUCT_NAME}.`
                   }
                   value={closeToBackgroundOnClose}
                   onChange={setCloseToBackgroundOnClose}
@@ -71,10 +71,10 @@ export function Desktop({ requestBack, requestClose }: DesktopProps) {
                       trayFallback ? (
                         <Text as="span" style={{ color: color.Warning.Main }} size="T200">
                           System tray is unavailable on this system. Without it, closing the window
-                          exits Sable.
+                          exits {SABLE_PRODUCT_NAME}.
                         </Text>
                       ) : (
-                        'Show a system tray icon while Sable is running. Disable this if you want Sable to stay available without a tray icon.'
+                        `Show a system tray icon while ${SABLE_PRODUCT_NAME} is running. Disable this if you want ${SABLE_PRODUCT_NAME} to stay available without a tray icon.`
                       )
                     }
                     value={!trayFallback ? showSystemTrayIcon : false}

@@ -20,6 +20,13 @@ export type ClientConfig = {
 
   disableAccountSwitcher?: boolean;
   hideUsernamePasswordFields?: boolean;
+  /**
+   * Whether this deployment lets people create accounts from the client.
+   * Left undefined the client asks the homeserver, as upstream does.
+   * Set to false when accounts are created elsewhere (an external identity
+   * provider): the client then skips the registration probe entirely.
+   */
+  allowRegistration?: boolean;
 
   pushNotificationDetails?: {
     pushNotifyUrl?: string;

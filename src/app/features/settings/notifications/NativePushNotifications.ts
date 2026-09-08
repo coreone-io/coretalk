@@ -179,7 +179,7 @@ export async function enableNativePush(
       kind: 'http',
       app_id: appId,
       pushkey: registration.p256dh,
-      app_display_name: 'Sable (Native Push)',
+      app_display_name: `${SABLE_PRODUCT_NAME} (Native Push)`,
       device_display_name: deviceDisplayName,
       lang: navigator.language || 'en',
       data: {
@@ -201,7 +201,7 @@ export async function enableNativePush(
     kind: 'http',
     app_id: appId,
     pushkey: registration.token,
-    app_display_name: 'Sable (Native Push)',
+    app_display_name: `${SABLE_PRODUCT_NAME} (Native Push)`,
     device_display_name: deviceDisplayName,
     lang: navigator.language || 'en',
     data: {

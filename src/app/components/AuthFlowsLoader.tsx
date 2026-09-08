@@ -13,6 +13,7 @@ import {
   type RegisterFlowsResponse,
 } from '$hooks/useAuthFlows';
 import { fetch } from '$utils/fetch';
+import { useClientConfig } from '$hooks/useClientConfig';
 
 type AuthFlowsLoaderProps = {
   fallback?: () => ReactNode;
@@ -22,14 +23,23 @@ type AuthFlowsLoaderProps = {
 export function AuthFlowsLoader({ fallback, error, children }: AuthFlowsLoaderProps) {
   const autoDiscoveryInfo = useAutoDiscoveryInfo();
   const baseUrl = autoDiscoveryInfo['m.homeserver'].base_url;
+  const { allowRegistration } = useClientConfig();
+  // Undefined keeps the upstream behaviour: ask the homeserver. Only an
+  // explicit false means "this deployment creates accounts elsewhere".
+  const registrationProbeAllowed = allowRegistration !== false;
 
   const mx = useMemo(() => createClient({ baseUrl, fetchFn: fetch }), [baseUrl]);
 
   const [state, load] = useAsyncCallback(
     useCallback(async () => {
+      // The registration probe is a deliberate failing request: the server
+      // answers with an error and the client reads the state off its status
+      // code. Where registration is closed by configuration the answer is
+      // already known, so the request is skipped -- otherwise every visit to
+      // the login page logs its 403 in the browser console.
       const result = await Promise.allSettled([
         mx.loginFlows(),
-        mx.registerRequest({}),
+        registrationProbeAllowed ? mx.registerRequest({}) : Promise.resolve(undefined),
         mx.getAuthMetadata(),
       ]);
       const loginFlows = promiseFulfilledResult(result[0]);
@@ -39,10 +49,12 @@ export function AuthFlowsLoader({ fallback, error, children }: AuthFlowsLoaderPr
         ? discoveredAuthMetadata
         : undefined;
       let registerFlows: RegisterFlowsResponse = {
-        status: RegisterFlowStatus.InvalidRequest,
+        status: registrationProbeAllowed
+          ? RegisterFlowStatus.InvalidRequest
+          : RegisterFlowStatus.RegistrationDisabled,
       };
 
-      if (typeof registerResp === 'object' && registerResp.httpStatus) {
+      if (registrationProbeAllowed && typeof registerResp === 'object' && registerResp.httpStatus) {
         registerFlows = parseRegisterErrResp(registerResp);
       }
 
@@ -60,7 +72,7 @@ export function AuthFlowsLoader({ fallback, error, children }: AuthFlowsLoaderPr
       };
 
       return authFlows;
-    }, [mx])
+    }, [mx, registrationProbeAllowed])
   );
 
   useEffect(() => {
