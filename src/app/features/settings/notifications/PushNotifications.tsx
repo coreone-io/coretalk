@@ -10,6 +10,24 @@ type PushSubscriptionState = [
   (subscription: PushSubscription | null) => void,
 ];
 
+/**
+ * Пушер записывается прямо со страницы вызовом Client-Server API.
+ *
+ * Апстрим слал `pusherData` сервис-воркеру (`controller.postMessage`), и тот
+ * делал тот же запрос сам. Путь молчаливо обрывался всюду, где страница ещё
+ * НЕ контролируется воркером — первый визит после установки, жёсткая
+ * перезагрузка: `controller` там `null`, `?.postMessage` не делает ничего и
+ * ошибки не даёт. Человек видел включённый тумблер без пушера на сервере
+ * (COR-2454). Прямой вызов возвращает отказ сервера наверх — его показывает
+ * плитка настроек.
+ */
+async function applyPusher(
+  mx: MatrixClient,
+  pusherData: Record<string, unknown>
+): Promise<void> {
+  await mx.setPusher(pusherData as unknown as Parameters<typeof mx.setPusher>[0]);
+}
+
 export async function requestBrowserNotificationPermission(): Promise<NotificationPermission> {
   if (!('Notification' in window)) {
     debugLog.warn('notification', 'Notification API not available in this browser');
@@ -71,12 +89,8 @@ export async function enablePushNotifications(
       },
       append: false,
     };
-    navigator.serviceWorker.controller?.postMessage({
-      url: mx.baseUrl,
-      type: 'togglePush',
-      pusherData,
-      token: mx.getAccessToken(),
-    });
+    await applyPusher(mx, pusherData);
+    debugLog.info('notification', 'Pusher re-registered for existing subscription');
     return;
   }
 
@@ -120,12 +134,8 @@ export async function enablePushNotifications(
     append: false,
   };
 
-  navigator.serviceWorker.controller?.postMessage({
-    url: mx.baseUrl,
-    type: 'togglePush',
-    pusherData,
-    token: mx.getAccessToken(),
-  });
+  await applyPusher(mx, pusherData);
+  debugLog.info('notification', 'Pusher registered on the homeserver');
 }
 
 /**
@@ -148,12 +158,8 @@ export async function disablePushNotifications(
     pushkey: pushSubAtom?.keys?.p256dh,
   };
 
-  navigator.serviceWorker.controller?.postMessage({
-    url: mx.baseUrl,
-    type: 'togglePush',
-    pusherData,
-    token: mx.getAccessToken(),
-  });
+  await applyPusher(mx, pusherData);
+  debugLog.info('notification', 'Pusher deleted on the homeserver');
 }
 
 export async function deRegisterAllPushers(mx: MatrixClient): Promise<void> {
