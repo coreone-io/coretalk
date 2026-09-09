@@ -141,13 +141,17 @@ describe('регистрация пушера без контроллера се
     const setPusher = vi.fn<(pusher: PusherPayload) => Promise<unknown>>(async () => ({}));
     const mx = { baseUrl: 'https://server.example', getAccessToken: () => 'token', setPusher };
 
-    await disablePushNotifications(mx as never, { pushNotificationDetails: {} } as never, [
-      {
-        endpoint: 'https://push.example/endpoint',
-        keys: { p256dh: 'p256dh-key', auth: 'auth-key' },
-      },
-      vi.fn<(sub: unknown) => void>(),
-    ] as never);
+    await disablePushNotifications(
+      mx as never,
+      { pushNotificationDetails: {} } as never,
+      [
+        {
+          endpoint: 'https://push.example/endpoint',
+          keys: { p256dh: 'p256dh-key', auth: 'auth-key' },
+        },
+        vi.fn<(sub: unknown) => void>(),
+      ] as never
+    );
 
     expect(setPusher).toHaveBeenCalledWith(
       expect.objectContaining({ kind: null, pushkey: 'p256dh-key' })

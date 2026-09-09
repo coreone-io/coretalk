@@ -21,10 +21,7 @@ type PushSubscriptionState = [
  * (COR-2454). Прямой вызов возвращает отказ сервера наверх — его показывает
  * плитка настроек.
  */
-async function applyPusher(
-  mx: MatrixClient,
-  pusherData: Record<string, unknown>
-): Promise<void> {
+async function applyPusher(mx: MatrixClient, pusherData: Record<string, unknown>): Promise<void> {
   await mx.setPusher(pusherData as unknown as Parameters<typeof mx.setPusher>[0]);
 }
 
